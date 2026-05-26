@@ -16,10 +16,14 @@ public class GameSystem : MonoBehaviour
 
         // - Decorator
         IWeapon pistol = new Pistol();
-        Debug.Log("Base Damage= " + pistol.GetDamage());
-
+        Debug.Log("Pistol Base Damage= " + pistol.GetDamage());
         pistol = new DamageBoost(pistol);
-        Debug.Log("Boosted Damage= " + pistol.GetDamage());
+        Debug.Log("Pistol Boosted Damage= " + pistol.GetDamage());
+        
+        IWeapon rifle  = new Rifle();
+        Debug.Log("Rifle Base Damage= " + rifle.GetDamage());
+        rifle = new DamageBoost(rifle);
+        Debug.Log("Rifle Boosted Damage= " + rifle.GetDamage());
     }
 
     void Update()
