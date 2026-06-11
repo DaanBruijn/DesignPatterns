@@ -6,77 +6,57 @@ using UnityEngine;
 
 public class GameSystem : MonoBehaviour
 {
-    // - States
-    private GunState currentState;
+    // - Variables
+    [Header("Player References")]
+    [SerializeField] private Transform playerTransform;
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private Rigidbody playerRigidbody;
+    
+    private Player _player;
+    private PlayerStateMachine _playerStateMachine;
+
+    [Header("Gun References")] 
+    private GunStateMachine _gunStateMachine;
+    
+    // - Input
+    private InputHandler _inputHandler;
 
     void Start()
     {
-        // - FSM
-        currentState = GunState.Idle;
-
-        // - Decorator
-        IWeapon pistol = new Pistol();
-        Debug.Log("Pistol Base Damage= " + pistol.GetDamage());
-        pistol = new DamageBoost(pistol);
-        Debug.Log("Pistol Boosted Damage= " + pistol.GetDamage());
+        // - Cursor Lock
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         
-        IWeapon rifle  = new Rifle();
-        Debug.Log("Rifle Base Damage= " + rifle.GetDamage());
-        rifle = new DamageBoost(rifle);
-        Debug.Log("Rifle Boosted Damage= " + rifle.GetDamage());
+        // - References
+        // - Gun - FSM
+        Weapon pistol = new Pistol();
+
+        _gunStateMachine = new GunStateMachine(pistol);
+        
+        // - Input
+        _inputHandler = new InputHandler(_gunStateMachine);
+        
+        // - Player - FSM
+        _player = new Player(playerTransform, cameraTransform, playerRigidbody);
+        
+        _playerStateMachine = new PlayerStateMachine(_player);
+        _playerStateMachine.ChangeState(new PlayerIdleState());
     }
 
     void Update()
     {
-        HandleStateMachine();
-        HandleCommands();
-    }
-
-    private void HandleStateMachine()
-    {
-        switch (currentState)
-        {
-            case GunState.Idle:
-                if (Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    currentState = GunState.Firing;
-                }
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    currentState = GunState.Reloading;
-                }
-
-                break;
-
-            case GunState.Firing:
-                Debug.Log("Firing State active");
-                currentState = GunState.Idle;
-
-                break;
-
-            case GunState.Reloading:
-                Debug.Log("Reloading State active");
-                currentState = GunState.Idle;
-
-                break;
-        }
-    }
-
-    private void HandleCommands()
-    {
-        ICommand command = null;
+        // - Player Update
+        _player.Look(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            command = new ShootCommand();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            command = new ReloadCommand();
-        }
+        _playerStateMachine.Update();
+        
+        // - Gun Update
+        _gunStateMachine.Update();
+        
+        // - ICommand
+        ICommand command = _inputHandler.GetCommand();
+        
         if (command != null)
-        {
             command.Execute();
-        }
     }
 }

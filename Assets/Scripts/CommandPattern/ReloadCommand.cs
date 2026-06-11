@@ -5,8 +5,17 @@ using UnityEngine;
 
 public class ReloadCommand : ICommand
 {
+    // - Variables
+    private GunStateMachine _gunStateMachine;
+
+
+    public ReloadCommand(GunStateMachine _gunStateMachine)
+    {
+        this._gunStateMachine = _gunStateMachine;
+    }
+    
     public void Execute()
     {
-        Debug.Log("Reload.Log");
+        _gunStateMachine.ChangeGunState(new ReloadingState());
     }
 }

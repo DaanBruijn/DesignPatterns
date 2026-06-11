@@ -6,8 +6,16 @@ using UnityEngine.Rendering.UI;
 
 public class ShootCommand : ICommand
 {
+    // - Variables
+    private GunStateMachine _gunStateMachine;
+    
+    public ShootCommand(GunStateMachine _gunStateMachine)
+    {
+        this._gunStateMachine = _gunStateMachine;
+    }
+    
     public void Execute()
     {
-        Debug.Log("Shoot.Log");
+        _gunStateMachine.ChangeGunState(new FiringState());
     }
 }
