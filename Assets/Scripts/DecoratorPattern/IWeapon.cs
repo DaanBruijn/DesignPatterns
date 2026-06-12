@@ -3,6 +3,7 @@
 
 public interface IWeapon
 { 
+    FireMode GetFireMode();
     int GetDamage();
     int GetAmmo();
     int GetMaxAmmo();

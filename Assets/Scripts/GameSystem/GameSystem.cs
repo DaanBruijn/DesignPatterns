@@ -43,7 +43,7 @@ public class GameSystem : MonoBehaviour
         _inputHandler = new InputHandler(_gunStateMachine);
         
         // - Debug
-        IWeapon weapon = new Pistol();
+        IWeapon weapon = new Rifle();
         Debug.Log(weapon.GetDamage());
         Debug.Log(weapon.GetMaxAmmo());
 
@@ -56,12 +56,8 @@ public class GameSystem : MonoBehaviour
 
     void Update()
     {
-        // - Player Update
-        _player.Look(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        _playerStateMachine.Update();
-        
-        // - Gun Update
-        _gunStateMachine.Update();
+        UpdatePlayer();
+        UpdateGun();
         
         // - ICommand
         ICommand command = _inputHandler.GetCommand();
@@ -94,8 +90,27 @@ public class GameSystem : MonoBehaviour
     void InitializeGuns()
     {
         // - Gun - FSM
-        Weapon pistol = new Pistol();
+        Weapon rifle = new Rifle();
 
-        _gunStateMachine = new GunStateMachine(pistol, _player, _targets);
+        _gunStateMachine = new GunStateMachine(rifle, _player, _targets);
+    }
+
+    void UpdatePlayer()
+    {
+        // - Player Update
+        _player.Look(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        _playerStateMachine.Update();
+    }
+
+    void UpdateGun()
+    {
+        // - Gun Input
+        bool held = Input.GetMouseButton(0);
+        bool pressed = Input.GetMouseButtonDown(0);
+        
+        _gunStateMachine.HandleShooting(held, pressed);
+        
+        // - Gun State
+        _gunStateMachine.Update();
     }
 }

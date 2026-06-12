@@ -34,4 +34,14 @@ public class InputHandler
 
         return null;
     }
+
+    public bool ShootHeld()
+    {
+        return Input.GetMouseButton(0);
+    }
+
+    public bool ShootPressed()
+    {
+        return Input.GetMouseButtonDown(0);
+    }
 }

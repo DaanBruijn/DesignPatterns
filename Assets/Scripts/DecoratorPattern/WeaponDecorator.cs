@@ -12,16 +12,36 @@ public class WeaponDecorator : IWeapon
         this.weapon = weapon;
     }
 
-    public virtual int GetDamage() => weapon.GetDamage();
+    public FireMode GetFireMode()
+    {
+        return weapon.GetFireMode();
+    }
 
-    public virtual bool Shoot() => weapon.Shoot();
-    
-    public virtual int GetAmmo() => weapon.GetAmmo();
-    
-    public virtual int GetMaxAmmo() => weapon.GetMaxAmmo();
+    public virtual int GetDamage()
+    {
+        return weapon.GetDamage();
+    }
 
-    public virtual void Reload() => weapon.Reload();
-    
+    public virtual bool Shoot()
+    {
+        return weapon.Shoot();
+    }
+
+    public virtual void Reload()
+    {
+        weapon.Reload();
+    }
+
+    public virtual int GetAmmo()
+    {
+        return weapon.GetAmmo();
+    }
+
+    public virtual int GetMaxAmmo()
+    {
+        return weapon.GetMaxAmmo();
+    }
+
     public virtual float GetFireRate()
     {
         return weapon.GetFireRate();

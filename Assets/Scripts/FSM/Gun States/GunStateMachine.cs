@@ -8,9 +8,17 @@ public class GunStateMachine
 {
     // - Variables
     private GunState _currentState;
+
+    private float _nextFireTime;
     
     public IWeapon CurrentWeapon { get; private set;  }
     public Player Player { get; }
+    
+    public float NextFireTime
+    {
+        get => _nextFireTime;
+        set => _nextFireTime = value;
+    }
     
     private List<TargetActor> _targets;
 
@@ -44,6 +52,20 @@ public class GunStateMachine
         }
         
         return null;
+    }
+
+    public void HandleShooting(bool shootHeld, bool shootPressed)
+    {
+        if (CurrentWeapon.GetFireMode() == FireMode.FullAuto)
+        {
+            if (shootHeld)
+                ChangeGunState(new FiringState());
+        }
+        else
+        {
+            if (shootPressed)
+                ChangeGunState(new FiringState());
+        }
     }
 
     public void ApplyUpgrade(IWeapon newWeapon)

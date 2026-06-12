@@ -11,6 +11,12 @@ public class Weapon : IWeapon
     protected int ammo;
     protected int maxAmmo;
     protected float fireRate;
+    protected FireMode fireMode;
+
+    public FireMode GetFireMode()
+    {
+        return fireMode;
+    }
 
     public virtual int GetDamage() => damage;
 

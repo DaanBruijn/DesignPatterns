@@ -8,11 +8,31 @@ public class FiringState : GunState
 {
     public override void Enter(GunStateMachine stateMachine)
     {
+        // - Try shooting when entering
+        TryShoot(stateMachine);
+        stateMachine.ChangeGunState(new GunIdleState());
+    }
+
+    public override void Update(GunStateMachine stateMachine)
+    {
+    }
+
+    public override void Exit(GunStateMachine stateMachine)
+    {
+    }
+
+    private void TryShoot(GunStateMachine stateMachine)
+    {
+        if (Time.time < stateMachine.NextFireTime)
+            return;
+        
         if (!stateMachine.CurrentWeapon.Shoot())
         {
             stateMachine.ChangeGunState(new GunIdleState());
             return;
         }
+        
+        stateMachine.NextFireTime = Time.time + stateMachine.CurrentWeapon.GetFireRate();
         
         if (stateMachine.Player.TryRayCast(out RaycastHit hit))
         {
@@ -23,15 +43,5 @@ public class FiringState : GunState
                 target.TargetData.TakeDamage(stateMachine.CurrentWeapon.GetDamage());
             }
         }
-        
-        stateMachine.ChangeGunState(new GunIdleState());
-    }
-
-    public override void Update(GunStateMachine stateMachine)
-    {
-    }
-
-    public override void Exit(GunStateMachine stateMachine)
-    {
     }
 }
