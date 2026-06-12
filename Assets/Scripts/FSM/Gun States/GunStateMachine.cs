@@ -9,7 +9,7 @@ public class GunStateMachine
     // - Variables
     private GunState _currentState;
     
-    public Weapon CurrentWeapon { get; }
+    public IWeapon CurrentWeapon { get; private set;  }
     public Player Player { get; }
     
     private List<TargetActor> _targets;

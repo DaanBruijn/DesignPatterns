@@ -57,6 +57,17 @@ public class GameSystem : MonoBehaviour
         
         // - Input
         _inputHandler = new InputHandler(_gunStateMachine);
+        
+        // - Debug
+        IWeapon weapon = new Pistol();
+        Debug.Log(weapon.GetDamage());
+        Debug.Log(weapon.GetMaxAmmo());
+
+        weapon = new DamageBoost(weapon);
+        Debug.Log(weapon.GetDamage());
+
+        weapon = new MagazineBoost(weapon);
+        Debug.Log(weapon.GetMaxAmmo());
     }
 
     void Update()

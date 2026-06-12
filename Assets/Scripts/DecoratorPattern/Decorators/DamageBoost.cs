@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // - DamageBoost Class - Inheritance from WeaponDecorator
 // - Used to change weapon damage stat
 // - Daniel Bruijn

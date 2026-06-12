@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // - Pistol Class - Inheritance from Weapon
 // - Daniel Bruijn
 
@@ -9,6 +7,6 @@ public class Pistol : Weapon
     {
         damage = 10;
         maxAmmo = 12;
-        ammo = maxAmmo;
+        fireRate = 0.25f;
     }
 }

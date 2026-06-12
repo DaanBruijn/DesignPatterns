@@ -10,15 +10,17 @@ public class Weapon : IWeapon
     protected int damage;
     protected int ammo;
     protected int maxAmmo;
-    
-    public virtual int GetDamage()
-    {
-        return damage;
-    }
+    protected float fireRate;
 
-    public virtual int GetAmmo()
+    public virtual int GetDamage() => damage;
+
+    public virtual int GetAmmo() => ammo;
+    
+    public virtual int GetMaxAmmo() => maxAmmo;
+
+    public virtual float GetFireRate()
     {
-        return ammo;
+        return fireRate;
     }
 
     public virtual bool Shoot()
