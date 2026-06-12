@@ -45,4 +45,9 @@ public class GunStateMachine
         
         return null;
     }
+
+    public void ApplyUpgrade(IWeapon newWeapon)
+    {
+        CurrentWeapon = newWeapon;
+    }
 }

@@ -35,25 +35,9 @@ public class GameSystem : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         
         // - References
-        // - Player - FSM
-        _player = new Player(playerTransform, cameraTransform, playerRigidbody);
-        
-        _playerStateMachine = new PlayerStateMachine(_player);
-        _playerStateMachine.ChangeState(new PlayerIdleState());
-        
-        // - Targets
-        _targets = new List<TargetActor>();
-        foreach (Transform targetTransform in targetTransforms)
-        {
-            Target target = new Target(30);
-            
-            _targets.Add(new TargetActor(targetTransform, target));
-        }
-        
-        // - Gun - FSM
-        Weapon pistol = new Pistol();
-
-        _gunStateMachine = new GunStateMachine(pistol, _player, _targets);
+        InitializePlayer();
+        InitializeTargets();
+        InitializeGuns();
         
         // - Input
         _inputHandler = new InputHandler(_gunStateMachine);
@@ -74,7 +58,6 @@ public class GameSystem : MonoBehaviour
     {
         // - Player Update
         _player.Look(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        
         _playerStateMachine.Update();
         
         // - Gun Update
@@ -82,8 +65,37 @@ public class GameSystem : MonoBehaviour
         
         // - ICommand
         ICommand command = _inputHandler.GetCommand();
-        
         if (command != null)
             command.Execute();
+    }
+
+    void InitializePlayer()
+    {
+        // - Player - FSM
+        _player = new Player(playerTransform, cameraTransform, playerRigidbody);
+        
+        _playerStateMachine = new PlayerStateMachine(_player);
+        _playerStateMachine.ChangeState(new PlayerIdleState());
+
+    }
+
+    void InitializeTargets()
+    {
+        // - Targets
+        _targets = new List<TargetActor>();
+        foreach (Transform targetTransform in targetTransforms)
+        {
+            Target target = new Target(30);
+            
+            _targets.Add(new TargetActor(targetTransform, target));
+        }
+    }
+
+    void InitializeGuns()
+    {
+        // - Gun - FSM
+        Weapon pistol = new Pistol();
+
+        _gunStateMachine = new GunStateMachine(pistol, _player, _targets);
     }
 }
