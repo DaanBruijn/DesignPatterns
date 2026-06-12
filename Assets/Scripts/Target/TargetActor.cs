@@ -15,4 +15,9 @@ public class TargetActor
         Transform = transform;
         TargetData = target;
     }
+
+    public void DestroyTarget()
+    {
+        Transform.gameObject.SetActive(false);
+    }
 }

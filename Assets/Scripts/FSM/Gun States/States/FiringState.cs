@@ -39,9 +39,10 @@ public class FiringState : GunState
             TargetActor target = stateMachine.GetTarget(hit.transform);
 
             if (target != null)
-            {
                 target.TargetData.TakeDamage(stateMachine.CurrentWeapon.GetDamage());
-            }
+            
+            if (target.TargetData.IsDestroyed)
+                target.DestroyTarget();
         }
     }
 }

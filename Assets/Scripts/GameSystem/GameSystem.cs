@@ -35,6 +35,10 @@ public class GameSystem : MonoBehaviour
     
     // - Target
     private List<TargetActor> _targets;
+    
+    // - Timer
+    private float _runTimer;
+    private bool _runActive;
 
     void Start()
     {
@@ -49,10 +53,15 @@ public class GameSystem : MonoBehaviour
         
         // - Input
         _inputHandler = new InputHandler(_gunStateMachine);
+        
+        // - Timer
+        _runActive = true;
+        _runTimer = 0;
     }
 
     void Update()
     {
+        // - Player
         UpdatePlayer();
         
         // - ICommand
@@ -60,10 +69,15 @@ public class GameSystem : MonoBehaviour
         if (command != null)
             command.Execute();
         
+        // - Guns
         UpdateGun();
         UpdateWeaponVisuals();
         
+        // - UI
         UpdateAmmoUI();
+        
+        // - RunTimer
+        UpdateRun();
     }
 
     void InitializePlayer()
@@ -82,7 +96,7 @@ public class GameSystem : MonoBehaviour
         _targets = new List<TargetActor>();
         foreach (Transform targetTransform in targetTransforms)
         {
-            Target target = new Target(200);
+            Target target = new Target(100);
             
             _targets.Add(new TargetActor(targetTransform, target));
         }
@@ -125,5 +139,31 @@ public class GameSystem : MonoBehaviour
     void UpdateAmmoUI()
     {
         ammoText.text = _gunStateMachine.CurrentWeapon.GetAmmo() + " / " + _gunStateMachine.CurrentWeapon.GetMaxAmmo();
+    }
+
+    void UpdateRun()
+    {
+        if (_runActive)
+            _runTimer += Time.deltaTime;
+
+        if (_runActive && AreAllTargetsDestroyed())
+            CompleteRun();
+    }
+
+    void CompleteRun()
+    {
+        _runActive = false;
+        Debug.Log("Time: " + _runTimer.ToString("F2"));
+    }
+
+    bool AreAllTargetsDestroyed()
+    {
+        foreach (TargetActor target in _targets)
+        {
+            if (!target.TargetData.IsDestroyed)
+                return false;
+        }
+
+        return true;
     }
 }
