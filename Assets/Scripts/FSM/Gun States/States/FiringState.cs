@@ -34,15 +34,17 @@ public class FiringState : GunState
         
         stateMachine.NextFireTime = Time.time + stateMachine.CurrentWeapon.GetFireRate();
         
-        if (stateMachine.Player.TryRayCast(out RaycastHit hit))
-        {
-            TargetActor target = stateMachine.GetTarget(hit.transform);
+        if (!stateMachine.Player.TryRayCast(out RaycastHit hit))
+            return;
+        TargetActor target = stateMachine.GetTarget(hit.transform);
 
-            if (target != null)
-                target.TargetData.TakeDamage(stateMachine.CurrentWeapon.GetDamage());
+        if (target == null)
+            return;
+        
+        target.TargetData.TakeDamage(stateMachine.CurrentWeapon.GetDamage());
             
-            if (target.TargetData.IsDestroyed)
-                target.DestroyTarget();
-        }
+        if (target.TargetData.IsDestroyed)
+            target.DestroyTarget();
+        
     }
 }

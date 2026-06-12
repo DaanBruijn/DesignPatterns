@@ -5,17 +5,15 @@ using UnityEngine;
 public class UpgradeFireRateCommand : ICommand
 {
     // - Variables
-    private GunStateMachine _gunStateMachine;
+    private UpgradeSystem _upgradeSystem;
 
-    public UpgradeFireRateCommand(GunStateMachine gunStateMachine)
+    public UpgradeFireRateCommand(UpgradeSystem upgradeSystem)
     {
-        _gunStateMachine = gunStateMachine;
+        _upgradeSystem = upgradeSystem;
     }
 
     public void Execute()
     {
-        _gunStateMachine.ApplyUpgrade(new FireRateBoost(_gunStateMachine.CurrentWeapon));
-        
-        Debug.Log("FireRate boost applied");
+        _upgradeSystem.ApplyFireRateUpgrade();
     }
 }

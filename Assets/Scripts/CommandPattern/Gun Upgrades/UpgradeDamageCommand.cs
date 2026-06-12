@@ -5,17 +5,15 @@ using UnityEngine;
 public class UpgradeDamageCommand : ICommand
 {
     // - Variables
-    private GunStateMachine _gunStateMachine;
+    private UpgradeSystem _upgradeSystem;
 
-    public UpgradeDamageCommand(GunStateMachine gunStateMachine)
+    public UpgradeDamageCommand(UpgradeSystem upgradeSystem)
     {
-        _gunStateMachine = gunStateMachine;
+        _upgradeSystem = upgradeSystem;
     }
 
     public void Execute()
     {
-        _gunStateMachine.ApplyUpgrade(new DamageBoost(_gunStateMachine.CurrentWeapon));
-        
-        Debug.Log("Damage boost applied");
+        _upgradeSystem.ApplyDamageUpgrade();
     }
 }

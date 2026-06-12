@@ -7,10 +7,12 @@ public class InputHandler
 {
     // - Variables
     private GunStateMachine _gunStateMachine;
+    private UpgradeSystem _upgradeSystem;
     
-    public InputHandler(GunStateMachine gunStateMachine)
+    public InputHandler(GunStateMachine gunStateMachine,  UpgradeSystem upgradeSystem)
     {
         _gunStateMachine = gunStateMachine;
+        _upgradeSystem = upgradeSystem;
     }
     
     public ICommand GetCommand()
@@ -29,15 +31,20 @@ public class InputHandler
         if (Input.GetKeyDown(KeyCode.Alpha2))
             return new EquipPistolCommand(_gunStateMachine);
 
+        return null;
+    }
+    
+    public ICommand GetUpgradeCommand()
+    {
         // - Weapon Upgrades
         if (Input.GetKeyDown(KeyCode.Alpha8))
-            return new UpgradeDamageCommand(_gunStateMachine);
+            return new UpgradeDamageCommand(_upgradeSystem);
         
         if (Input.GetKeyDown(KeyCode.Alpha9))
-            return new UpgradeMagazineCommand(_gunStateMachine);
+            return new UpgradeMagazineCommand(_upgradeSystem);
         
         if (Input.GetKeyDown(KeyCode.Alpha0))
-            return new UpgradeFireRateCommand(_gunStateMachine);
+            return new UpgradeFireRateCommand(_upgradeSystem);
 
         return null;
     }
@@ -51,4 +58,6 @@ public class InputHandler
     {
         return Input.GetMouseButtonDown(0);
     }
+
+    
 }

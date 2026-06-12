@@ -13,25 +13,25 @@ public class GunStateMachine
 
     private IWeapon _rifle;
     private IWeapon _pistol;
-    
-    public IWeapon CurrentWeapon { get; private set;  }
+
+    public IWeapon CurrentWeapon { get; private set; }
     public Player Player { get; }
-    
+
     public float NextFireTime
     {
         get => _nextFireTime;
         set => _nextFireTime = value;
     }
-    
+
     private List<TargetActor> _targets;
 
     public GunStateMachine(IWeapon rifle, IWeapon pistol, Player player, List<TargetActor> targets)
     {
         _rifle = rifle;
         _pistol = pistol;
-        
+
         CurrentWeapon = rifle;
-        
+
         Player = player;
         _targets = targets;
     }
@@ -57,7 +57,7 @@ public class GunStateMachine
                 return target;
             }
         }
-        
+
         return null;
     }
 
@@ -88,6 +88,11 @@ public class GunStateMachine
             _pistol = upgradedWeapon;
             CurrentWeapon = _pistol;
         }
+    }
+
+    public void SetWeapon(IWeapon newWeapon)
+    {
+        CurrentWeapon = newWeapon;
     }
 
     public void EquipRifle()

@@ -20,4 +20,10 @@ public class TargetActor
     {
         Transform.gameObject.SetActive(false);
     }
+
+    public void Reset()
+    {
+        Transform.gameObject.SetActive(true);
+        TargetData.Reset();
+    }
 }

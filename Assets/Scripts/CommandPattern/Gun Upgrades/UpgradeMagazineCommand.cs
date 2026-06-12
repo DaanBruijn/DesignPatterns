@@ -5,17 +5,15 @@ using UnityEngine;
 public class UpgradeMagazineCommand : ICommand
 {
     // - Variables
-    private GunStateMachine _gunStateMachine;
+    private UpgradeSystem _upgradeSystem;
 
-    public UpgradeMagazineCommand(GunStateMachine gunStateMachine)
+    public UpgradeMagazineCommand(UpgradeSystem upgradeSystem)
     {
-        _gunStateMachine = gunStateMachine;
+        _upgradeSystem = upgradeSystem;
     }
 
     public void Execute()
     {
-        _gunStateMachine.ApplyUpgrade(new MagazineBoost(_gunStateMachine.CurrentWeapon));
-        
-        Debug.Log("Magazine boost applied");
+        _upgradeSystem.ApplyMagazineUpgrade();
     }
 }
