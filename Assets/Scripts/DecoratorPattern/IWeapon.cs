@@ -11,4 +11,5 @@ public interface IWeapon
 
     bool Shoot();
     void Reload();
+    void SetAmmo(int ammo);
 }

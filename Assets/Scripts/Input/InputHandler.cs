@@ -22,14 +22,21 @@ public class InputHandler
         if (Input.GetKeyDown(KeyCode.R))
             return new ReloadCommand(_gunStateMachine);
 
-        // - Weapon Upgrades
+        // - Weapon Equip
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            return new UpgradeDamageCommand(_gunStateMachine);
+            return new EquipRifleCommand(_gunStateMachine);
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            return new UpgradeMagazineCommand(_gunStateMachine);
+            return new EquipPistolCommand(_gunStateMachine);
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        // - Weapon Upgrades
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+            return new UpgradeDamageCommand(_gunStateMachine);
+        
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+            return new UpgradeMagazineCommand(_gunStateMachine);
+        
+        if (Input.GetKeyDown(KeyCode.Alpha0))
             return new UpgradeFireRateCommand(_gunStateMachine);
 
         return null;

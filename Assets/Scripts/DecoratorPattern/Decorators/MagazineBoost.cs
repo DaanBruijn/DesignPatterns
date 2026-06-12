@@ -12,4 +12,9 @@ public class MagazineBoost : WeaponDecorator
     {
         return weapon.GetMaxAmmo() + 10;
     }
+
+    public override void Reload()
+    {
+        weapon.SetAmmo(GetMaxAmmo());
+    }
 }

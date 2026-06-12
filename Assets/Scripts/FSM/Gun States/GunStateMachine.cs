@@ -10,6 +10,9 @@ public class GunStateMachine
     private GunState _currentState;
 
     private float _nextFireTime;
+
+    private IWeapon _rifle;
+    private IWeapon _pistol;
     
     public IWeapon CurrentWeapon { get; private set;  }
     public Player Player { get; }
@@ -22,9 +25,13 @@ public class GunStateMachine
     
     private List<TargetActor> _targets;
 
-    public GunStateMachine(Weapon weapon, Player player, List<TargetActor> targets)
+    public GunStateMachine(IWeapon rifle, IWeapon pistol, Player player, List<TargetActor> targets)
     {
-        CurrentWeapon = weapon;
+        _rifle = rifle;
+        _pistol = pistol;
+        
+        CurrentWeapon = rifle;
+        
         Player = player;
         _targets = targets;
     }
@@ -68,8 +75,40 @@ public class GunStateMachine
         }
     }
 
-    public void ApplyUpgrade(IWeapon newWeapon)
+    public void ApplyUpgrade(IWeapon upgradedWeapon)
     {
-        CurrentWeapon = newWeapon;
+        // - !! Change to switch case if more weapons are added !!
+        if (CurrentWeapon == _rifle)
+        {
+            _rifle = upgradedWeapon;
+            CurrentWeapon = _rifle;
+        }
+        else
+        {
+            _pistol = upgradedWeapon;
+            CurrentWeapon = _pistol;
+        }
+    }
+
+    public void EquipRifle()
+    {
+        CurrentWeapon = _rifle;
+        Debug.Log("Equip Rifle");
+    }
+
+    public void EquipPistol()
+    {
+        CurrentWeapon = _pistol;
+        Debug.Log("Equip Pistol");
+    }
+
+    public bool IsRifleEquipped()
+    {
+        return CurrentWeapon == _rifle;
+    }
+    
+    public bool IsPistolEquipped()
+    {
+        return CurrentWeapon == _pistol;
     }
 }

@@ -46,4 +46,9 @@ public class WeaponDecorator : IWeapon
     {
         return weapon.GetFireRate();
     }
+
+    public virtual void SetAmmo(int amount)
+    {
+        weapon.SetAmmo(amount);
+    }
 }

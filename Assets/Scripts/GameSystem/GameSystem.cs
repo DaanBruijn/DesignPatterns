@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 // - The Main GameSystem
 // - Using a FiniteStateMachine (FSM), Decorator and Command Pattern
@@ -18,9 +19,16 @@ public class GameSystem : MonoBehaviour
 
     [Header("Gun References")] 
     private GunStateMachine _gunStateMachine;
+    
+    [Header("Gun Models")]
+    [SerializeField] private GameObject rifleModel;
+    [SerializeField] private GameObject pistolModel;
 
     [Header("Targets")]
     [SerializeField] private Transform[] targetTransforms;
+
+    [Header("UI")] 
+    [SerializeField] private TMP_Text ammoText;
     
     // - Input
     private InputHandler _inputHandler;
@@ -41,28 +49,21 @@ public class GameSystem : MonoBehaviour
         
         // - Input
         _inputHandler = new InputHandler(_gunStateMachine);
-        
-        // - Debug
-        IWeapon weapon = new Rifle();
-        Debug.Log(weapon.GetDamage());
-        Debug.Log(weapon.GetMaxAmmo());
-
-        weapon = new DamageBoost(weapon);
-        Debug.Log(weapon.GetDamage());
-
-        weapon = new MagazineBoost(weapon);
-        Debug.Log(weapon.GetMaxAmmo());
     }
 
     void Update()
     {
         UpdatePlayer();
-        UpdateGun();
         
         // - ICommand
         ICommand command = _inputHandler.GetCommand();
         if (command != null)
             command.Execute();
+        
+        UpdateGun();
+        UpdateWeaponVisuals();
+        
+        UpdateAmmoUI();
     }
 
     void InitializePlayer()
@@ -81,7 +82,7 @@ public class GameSystem : MonoBehaviour
         _targets = new List<TargetActor>();
         foreach (Transform targetTransform in targetTransforms)
         {
-            Target target = new Target(30);
+            Target target = new Target(200);
             
             _targets.Add(new TargetActor(targetTransform, target));
         }
@@ -90,9 +91,10 @@ public class GameSystem : MonoBehaviour
     void InitializeGuns()
     {
         // - Gun - FSM
-        Weapon rifle = new Rifle();
+        IWeapon rifle = new Rifle();
+        IWeapon pistol = new Pistol();
 
-        _gunStateMachine = new GunStateMachine(rifle, _player, _targets);
+        _gunStateMachine = new GunStateMachine(rifle, pistol, _player, _targets);
     }
 
     void UpdatePlayer()
@@ -112,5 +114,16 @@ public class GameSystem : MonoBehaviour
         
         // - Gun State
         _gunStateMachine.Update();
+    }
+
+    void UpdateWeaponVisuals()
+    {
+        rifleModel.SetActive(_gunStateMachine.IsRifleEquipped());
+        pistolModel.SetActive(_gunStateMachine.IsPistolEquipped());
+    }
+
+    void UpdateAmmoUI()
+    {
+        ammoText.text = _gunStateMachine.CurrentWeapon.GetAmmo() + " / " + _gunStateMachine.CurrentWeapon.GetMaxAmmo();
     }
 }

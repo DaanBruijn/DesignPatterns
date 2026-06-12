@@ -45,4 +45,9 @@ public class Weapon : IWeapon
     {
         ammo = maxAmmo;
     }
+
+    public virtual void SetAmmo(int amount)
+    {
+        ammo = amount;
+    }
 }
