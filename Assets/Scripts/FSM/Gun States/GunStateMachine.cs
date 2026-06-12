@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // - GunStateMachine for the GunStates
@@ -9,10 +10,15 @@ public class GunStateMachine
     private GunState _currentState;
     
     public Weapon CurrentWeapon { get; }
+    public Player Player { get; }
+    
+    private List<TargetActor> _targets;
 
-    public GunStateMachine(Weapon weapon)
+    public GunStateMachine(Weapon weapon, Player player, List<TargetActor> targets)
     {
         CurrentWeapon = weapon;
+        Player = player;
+        _targets = targets;
     }
 
     public void ChangeGunState(GunState newState)
@@ -25,5 +31,18 @@ public class GunStateMachine
     public void Update()
     {
         _currentState?.Update(this);
+    }
+
+    public TargetActor GetTarget(Transform transform)
+    {
+        foreach (TargetActor target in _targets)
+        {
+            if (target.Transform == transform)
+            {
+                return target;
+            }
+        }
+        
+        return null;
     }
 }

@@ -21,15 +21,16 @@ public class Weapon : IWeapon
         return ammo;
     }
 
-    public virtual void Shoot()
+    public virtual bool Shoot()
     {
         if (ammo <= 0)
         {
             Debug.Log("No ammo left :(");
-            return;
+            return false;
         }
         
         ammo--;
+        return true;
     }
 
     public virtual void Reload()

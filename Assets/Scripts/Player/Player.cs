@@ -28,6 +28,8 @@ public class Player
         this._rigidbody = _rigidbody;
     }
     
+    
+    // - Movement
     public void Move(Vector3 direction, float speed)
     {
         Vector3 velocity = _rigidbody.linearVelocity;
@@ -69,5 +71,12 @@ public class Player
     public bool IsGrounded()
     {
         return Physics.Raycast(_playerTransform.position, Vector3.down, 1.1f);
+    }
+    
+    // - Shooting
+    public bool TryRayCast(out RaycastHit hit)
+    {
+        Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
+        return Physics.Raycast(ray, out hit, 100f);
     }
 }

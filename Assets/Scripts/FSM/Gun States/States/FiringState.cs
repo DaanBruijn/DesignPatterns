@@ -8,9 +8,21 @@ public class FiringState : GunState
 {
     public override void Enter(GunStateMachine stateMachine)
     {
-        stateMachine.CurrentWeapon.Shoot();
+        if (!stateMachine.CurrentWeapon.Shoot())
+        {
+            stateMachine.ChangeGunState(new GunIdleState());
+            return;
+        }
         
-        Debug.Log("Shooting - Ammon: " + stateMachine.CurrentWeapon.GetAmmo());
+        if (stateMachine.Player.TryRayCast(out RaycastHit hit))
+        {
+            TargetActor target = stateMachine.GetTarget(hit.transform);
+
+            if (target != null)
+            {
+                target.TargetData.TakeDamage(stateMachine.CurrentWeapon.GetDamage());
+            }
+        }
         
         stateMachine.ChangeGunState(new GunIdleState());
     }
