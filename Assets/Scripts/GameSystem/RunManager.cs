@@ -64,7 +64,7 @@ public class RunManager
         _runState = RunState.Completed;
         _runCount++;
         
-        if (_bestRunTime < _runTimer)
+        if (_bestRunTime == 0 || _bestRunTime > _runTimer)
             _bestRunTime = _runTimer;
         
         Debug.Log("Time: " + _runTimer.ToString("F2"));

@@ -59,7 +59,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "FEAT__Gauntlet",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -135,6 +135,8 @@
       <workItem from="1781195834376" duration="5345000" />
       <workItem from="1781253589608" duration="4231000" />
       <workItem from="1781266364455" duration="1002000" />
+      <workItem from="1781344013210" duration="5000" />
+      <workItem from="1781344241731" duration="670000" />
     </task>
     <servers />
   </component>
