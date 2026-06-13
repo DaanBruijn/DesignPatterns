@@ -14,42 +14,34 @@ public class GameSystem : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Rigidbody playerRigidbody;
     
-    private Player _player;
-    private PlayerStateMachine _playerStateMachine;
-
-    [Header("Gun References")] 
-    private GunStateMachine _gunStateMachine;
-    
     [Header("Gun Models")]
     [SerializeField] private GameObject rifleModel;
     [SerializeField] private GameObject pistolModel;
-
+    
     [Header("Targets")]
     [SerializeField] private Transform[] targetTransforms;
     
     [Header("Startzone")]
     [SerializeField] private Transform _startZone;
     [SerializeField] private float _startRadius = 2f;
-
-    [Header("UI")] 
+    
+    [Header("UI")]
     [SerializeField] private TMP_Text ammoText;
     [SerializeField] private TMP_Text upgradeText;
     [SerializeField] private TMP_Text runInfoText;
+    [SerializeField] private TMP_Text bestRunTimeText;
     
-    // - Input
+    private Player _player;
+    private PlayerStateMachine _playerStateMachine;
+    
+    private GunStateMachine _gunStateMachine;
+    private UpgradeSystem _upgradeSystem;
     private InputHandler _inputHandler;
     
-    // - Target
-    private List<TargetActor> _targets;
+    private RunManager _runManager;
+    private TargetManager _targetManager;
+    private UIManager _uiManager;
     
-    // - Timer / Run
-    private float _runTimer;
-    private enum RunState{Running, Completed, WaitingToStart}
-    private RunState _runState;
-    private int _runCount;
-    
-    // - Upgrade
-    private UpgradeSystem _upgradeSystem;
     private bool _inUpgradePhase;
     
     void Start()
@@ -62,13 +54,7 @@ public class GameSystem : MonoBehaviour
         InitializePlayer();
         InitializeTargets();
         InitializeGuns();
-        
-        // - Input
-        _inputHandler = new InputHandler(_gunStateMachine, _upgradeSystem);
-        
-        // - Timer
-        _runState = RunState.WaitingToStart;
-        _runTimer = 0;
+        InitializeSystems();
     }
 
     void Update()
@@ -76,7 +62,7 @@ public class GameSystem : MonoBehaviour
         // - Upgrades
         if (_inUpgradePhase)
         {
-            ICommand upgradeCommand = _inputHandler.GetUpgradeCommand();
+            var upgradeCommand = _inputHandler.GetUpgradeCommand();
 
             if (upgradeCommand != null)
             {
@@ -90,22 +76,25 @@ public class GameSystem : MonoBehaviour
         // - Player
         UpdatePlayer();
         
-        // - ICommand
-        ICommand command = _inputHandler.GetCommand();
-        if (command != null)
-            command.Execute();
-        
-        // - Guns
+        // - Gun
         UpdateGun();
-        UpdateWeaponVisuals();
+        
+        // - ICommand
+        _inputHandler.GetCommand()?.Execute();
+        
+        // - Gun - FSM Update
+        _gunStateMachine.Update();
+
+        // - Run Manager
+        _runManager.TryStartRun();
+        bool completed = _runManager.UpdateRun();
+        
+        if (completed)
+            StartUpgradePhase();
         
         // - UI
-        UpdateAmmoUI();
-        
-        // - Run
-        StartRun();
-        UpdateRun();
-        UpdateRunUI();
+        UpdateWeaponVisuals();
+        UpdateUI();
     }
 
     void InitializePlayer()
@@ -115,19 +104,11 @@ public class GameSystem : MonoBehaviour
         
         _playerStateMachine = new PlayerStateMachine(_player);
         _playerStateMachine.ChangeState(new PlayerIdleState());
-
     }
 
     void InitializeTargets()
     {
-        // - Targets
-        _targets = new List<TargetActor>();
-        foreach (Transform targetTransform in targetTransforms)
-        {
-            Target target = new Target(100);
-            
-            _targets.Add(new TargetActor(targetTransform, target));
-        }
+        _targetManager = new TargetManager(targetTransforms);
     }
 
     void InitializeGuns()
@@ -136,8 +117,15 @@ public class GameSystem : MonoBehaviour
         IWeapon rifle = new Rifle();
         IWeapon pistol = new Pistol();
 
-        _gunStateMachine = new GunStateMachine(rifle, pistol, _player, _targets);
+        _gunStateMachine = new GunStateMachine(rifle, pistol, _player, _targetManager.GetTargets());
         _upgradeSystem = new UpgradeSystem(_gunStateMachine);
+    }
+
+    void InitializeSystems()
+    {
+        _runManager = new RunManager(playerTransform, _startZone, _startRadius, _targetManager);
+        _uiManager = new UIManager(ammoText, upgradeText, runInfoText, bestRunTimeText);
+        
         _inputHandler = new InputHandler(_gunStateMachine, _upgradeSystem);
     }
 
@@ -147,7 +135,7 @@ public class GameSystem : MonoBehaviour
         _player.Look(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         _playerStateMachine.Update();
     }
-
+    
     void UpdateGun()
     {
         // - Gun Input
@@ -159,115 +147,33 @@ public class GameSystem : MonoBehaviour
         // - Gun State
         _gunStateMachine.Update();
     }
-
+    
     void UpdateWeaponVisuals()
     {
         rifleModel.SetActive(_gunStateMachine.IsRifleEquipped());
         pistolModel.SetActive(_gunStateMachine.IsPistolEquipped());
     }
 
-    void UpdateAmmoUI()
+    void UpdateUI()
     {
-        ammoText.text = _gunStateMachine.CurrentWeapon.GetAmmo() + " / " + _gunStateMachine.CurrentWeapon.GetMaxAmmo();
-    }
-
-    void StartRun()
-    {
-        if (_runState != RunState.WaitingToStart)
-            return;
+        _uiManager.UpdateAmmoUI(_gunStateMachine.CurrentWeapon.GetAmmo(), _gunStateMachine.CurrentWeapon.GetMaxAmmo());
         
-        if (!IsPlayerAtStart())
-            return;
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            _runState = RunState.Running;
-            _runTimer = 0;
-        }
+        _uiManager.UpdateRunUI(_runManager.GetRunText(), _runManager.GetBestRunTime());
     }
-
-    void UpdateRun()
-    {
-        if (_runState != RunState.Running)
-            return;
-
-        _runTimer += Time.deltaTime;
-        
-        if (AreAllTargetsDestroyed())
-            CompleteRun();
-    }
-
-    void CompleteRun()
-    {
-        _runState = RunState.Completed;
-        _runCount++;
-        
-        Debug.Log("Time: " + _runTimer.ToString("F2"));
-
-        StartUpgradePhase();
-    }
-
-    void ResetRun()
-    {
-        _runTimer = 0;
-        _runState = RunState.WaitingToStart;
-    }
-
-    bool AreAllTargetsDestroyed()
-    {
-        foreach (TargetActor target in _targets)
-        {
-            if (!target.TargetData.IsDestroyed)
-                return false;
-        }
-
-        return true;
-    }
-
-    void ResetTargets()
-    {
-        foreach (TargetActor target in _targets)
-            target.Reset();
-    }
-
+    
     void StartUpgradePhase()
     {
         _inUpgradePhase = true;
-        
-        upgradeText.gameObject.SetActive(true);
+        _uiManager.ShowUpgrade();
     }
 
     void EndUpgradePhase()
     {
         _inUpgradePhase = false;
-        
-        upgradeText.gameObject.SetActive(false);
-        
-        ResetTargets();
-        ResetRun();
-    }
+        _uiManager.HideUpgrade();
 
-    bool IsPlayerAtStart()
-    {
-        return Vector3.Distance(playerTransform.position, _startZone.position) < _startRadius;
-    }
-
-    void UpdateRunUI()
-    {
-        if (_runState == RunState.WaitingToStart)
-        {
-            if (IsPlayerAtStart())
-                runInfoText.text = "Press E to start run";
-            else
-                runInfoText.text = "Go to Start zone!!";
-        }
-        else if (_runState == RunState.Running)
-        {
-            runInfoText.text = "Run: " + (_runCount + 1) +"\nTime: " + _runTimer.ToString("F2");
-        }
-        else if (_runState == RunState.Completed)
-        {
-            runInfoText.text = "Complete!\nTime: " + _runTimer.ToString("F2");
-        }
+        _targetManager.ResetTargets();
+        
+        _runManager.ResetRun();
     }
 }
