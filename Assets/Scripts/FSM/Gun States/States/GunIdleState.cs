@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // - GunIdle State for the gun
 // - Used by GunState
 // - Daniel Bruijn

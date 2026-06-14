@@ -1,12 +1,10 @@
-using UnityEngine;
-
 // - PlayerStateMachine for the Player States
 // - Daniel Bruijn
 
 public class PlayerStateMachine
 {
     // - Variables
-    private PlayerState currentState;
+    private PlayerState _currentState;
     
     public Player Player { get; }
 
@@ -17,13 +15,13 @@ public class PlayerStateMachine
 
     public void ChangeState(PlayerState newState)
     {
-        currentState?.Exit(this);
-        currentState = newState;
-        currentState.Enter(this);
+        _currentState?.Exit(this);
+        _currentState = newState;
+        _currentState.Enter(this);
     }
 
     public void Update()
     {
-        currentState?.Update(this);
+        _currentState?.Update(this);
     }
 }

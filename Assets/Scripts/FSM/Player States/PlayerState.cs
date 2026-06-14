@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // - FSM Pattern for the PlayerStates
 // - Daniel Bruijn
 

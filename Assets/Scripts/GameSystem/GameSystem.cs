@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Serialization;
 
 // - The Main GameSystem
 // - Using a FiniteStateMachine (FSM), Decorator and Command Pattern
@@ -22,8 +23,8 @@ public class GameSystem : MonoBehaviour
     [SerializeField] private Transform[] targetTransforms;
     
     [Header("Startzone")]
-    [SerializeField] private Transform _startZone;
-    [SerializeField] private float _startRadius = 2f;
+    [SerializeField] private Transform startZone;
+    [SerializeField] private float startRadius = 2f;
     
     [Header("UI")]
     [SerializeField] private TMP_Text ammoText;
@@ -123,7 +124,7 @@ public class GameSystem : MonoBehaviour
 
     void InitializeSystems()
     {
-        _runManager = new RunManager(playerTransform, _startZone, _startRadius, _targetManager);
+        _runManager = new RunManager(playerTransform, startZone, startRadius, _targetManager);
         _uiManager = new UIManager(ammoText, upgradeText, runInfoText, bestRunTimeText);
         
         _inputHandler = new InputHandler(_gunStateMachine, _upgradeSystem);

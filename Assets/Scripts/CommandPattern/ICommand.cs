@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // - Command Pattern Interface
 // - Daniel Bruijn
 

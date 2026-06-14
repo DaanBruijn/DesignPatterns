@@ -1,4 +1,3 @@
-using UnityEngine;
 // - Command for Upgrading the MagazineSize
 // - Daniel Bruijn
 

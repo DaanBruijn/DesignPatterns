@@ -1,5 +1,4 @@
 using TMPro;
-using UnityEngine;
 
 // - Script that handles the UI of the game
 // - Daniel Bruijn
